@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>许墨生命科学研究所 XILS - XuMo Institute of Life Sciences</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft Yahei",sans-serif;}
+        :root{
+            --main-purple:#5c4b82;
+            --light-purple:#e8e4f0;
+            --card-bg:#ffffff;
+            --bg-page:#f4f2f8;
+            --text-gray:#333;
+            --shadow-soft: 0 2px 12px rgba(92,75,130,0.08);
+            --shadow-card: 0 4px 18px rgba(92,75,130,0.12);
+            --shadow-hover: 0 8px 24px rgba(92,75,130,0.18);
+        }
+        body{
+            background-color:var(--bg-page);
+            background-image: radial-gradient(rgba(92,75,130,0.04) 1px, transparent 1px);
+            background-size:28px 28px;
+        }
+
+        /*头部logo栏*/
+        .header-top{
+            background:var(--card-bg);
+            padding:14px 8%;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            box-shadow:var(--shadow-soft);
+            position:sticky;
+            top:0;
+            z-index:99;
+        }
+        .logo-area{display:flex;align-items:center;gap:14px;}
+        .logo-mark{
+            background:var(--main-purple);
+            color:#fff;
+            padding:7px 16px;
+            font-weight:bold;
+            font-size:22px;
+            letter-spacing:2px;
+            border-radius:4px;
+        }
+        .logo-text h1{font-size:20px;color:var(--main-purple);}
+        .logo-text p{font-size:13px;color:#666;}
+        .search-box input{padding:7px 12px;border:1px solid #ddd;border-radius:4px;width:210px;}
+        .search-box button{padding:7px 14px;background:var(--main-purple);color:white;border:none;border-radius:4px;cursor:pointer;}
+
+        /*导航索引栏*/
+        .nav-bar{
+            background:var(--main-purple);
+            padding:0 8%;
+            box-shadow:var(--shadow-soft);
+        }
+        .nav-bar ul{
+            display:flex;
+            list-style:none;
+            flex-wrap:wrap;
+        }
+        .nav-bar li a{
+            display:block;
+            color:#fff;
+            text-decoration:none;
+            padding:14px 18px;
+            font-size:15px;
+            transition:background 0.24s;
+        }
+        .nav-bar li a:hover{background:#483a68;}
+
+        /*轮播banner卡片式*/
+        .banner{
+            margin:24px 8%;
+            background:var(--card-bg);
+            padding:42px 36px;
+            border-radius:12px;
+            box-shadow:var(--shadow-card);
+            position:relative;
+            background-color:var(--light-purple);
+        }
+        .banner-content h2{font-size:28px;color:var(--main-purple);margin-bottom:12px;}
+        .banner-content p{font-size:16px;color:#444;margin-bottom:8px;line-height:1.7;}
+        .banner-tag{
+            display:inline-block;
+            background:var(--main-purple);
+            color:#fff;
+            padding:5px 12px;
+            border-radius:4px;
+            font-size:14px;
+            margin:8px 0;
+        }
+
+        /*快速入口卡片组*/
+        .quick-entry{
+            margin:0 8%;
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+            gap:16px;
+        }
+        .quick-item{
+            padding:18px 14px;
+            background:var(--card-bg);
+            text-align:center;
+            border-radius:10px;
+            box-shadow:var(--shadow-card);
+            transition: transform 0.22s, box-shadow 0.22s;
+        }
+        .quick-item:hover{
+            transform: translateY(-3px);
+            box-shadow:var(--shadow-hover);
+        }
+        .quick-item a{color:var(--main-purple);text-decoration:none;font-weight:500;font-size:15px;}
+
+        /*主容器*/
+        .container{
+            padding:32px 8%;
+        }
+        .section-title{
+            font-size:22px;
+            color:var(--main-purple);
+            border-left:5px solid var(--main-purple);
+            padding-left:12px;
+            margin:40px 0 20px;
+        }
+        /*内容区块卡片*/
+        .content-card{
+            background:var(--card-bg);
+            padding:28px 30px;
+            border-radius:12px;
+            box-shadow:var(--shadow-card);
+            margin-bottom:24px;
+            line-height:1.78;
+            color:var(--text-gray);
+        }
+        .professor-item{
+            padding:16px 0;
+            border-bottom:1px dashed #ddd;
+        }
+        .professor-item:last-child{border-bottom:none;}
+
+        /*新闻卡片列表*/
+        .news-wrap{
+            display:grid;
+            grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+            gap:20px;
+        }
+        .news-card{
+            background:var(--card-bg);
+            border-radius:12px;
+            box-shadow:var(--shadow-card);
+            padding:22px 24px;
+            cursor:pointer;
+            transition: transform 0.22s, box-shadow 0.22s;
+        }
+        .news-card:hover{
+            transform: translateY(-4px);
+            box-shadow:var(--shadow-hover);
+        }
+        .news-date{color:#888;font-size:14px;margin-bottom:8px;display:block;}
+        .news-title{font-size:16px;color:#2c2c2c;font-weight:500;}
+
+        /*弹窗模态层*/
+        .modal-mask{
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.55);
+            z-index:999;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
+        }
+        .modal-box{
+            width:100%;
+            max-width:720px;
+            max-height:85vh;
+            overflow-y:auto;
+            background:#fff;
+            border-radius:14px;
+            box-shadow:0 10px 40px rgba(0,0,0,0.25);
+            padding:32px;
+            position:relative;
+        }
+        .modal-close{
+            position:absolute;
+            top:16px;
+            right:20px;
+            font-size:26px;
+            cursor:pointer;
+            color:#888;
+        }
+        .interview-q{font-weight:bold;margin-top:14px;}
+        .interview-a{margin-left:10px;margin-bottom:8px;}
+
+        /*页脚：放置合作交流 + 联系我们*/
+        footer{
+            margin-top:60px;
+            background:#2b243b;
+            color:#ddd;
+            padding:40px 8%;
+            display:grid;
+            grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+            gap:36px;
+        }
+        .footer-block h4{
+            font-size:17px;
+            margin-bottom:14px;
+            color:#e2dcf0;
+        }
+        .footer-block p,.footer-block li{
+            font-size:14px;
+            line-height:1.75;
+        }
+        .footer-block ul{padding-left:20px;}
+        .copyright{
+            grid-column: 1 / -1;
+            margin-top:24px;
+            padding-top:20px;
+            border-top:1px solid #443c58;
+            font-size:13px;
+            color:#aaa;
+        }
+    </style>
+</head>
+<body>
+<!--顶部Logo栏 LUCIEN-->
+<div class="header-top">
+    <div class="logo-area">
+        <div class="logo-mark">LUCIEN</div>
+        <div class="logo-text">
+            <h1>许墨生命科学研究所</h1>
+            <p>XuMo Institute of Life Sciences · XILS</p>
+        </div>
+    </div>
+    <div class="search-box">
+        <input placeholder="站内搜索...">
+        <button>搜索</button>
+    </div>
+</div>
+
+<!--导航索引栏-->
+<div class="nav-bar">
+    <ul>
+        <li><a href="#home">首页</a></li>
+        <li><a href="#intro">研究所简介</a></li>
+        <li><a href="#edu">人才教育</a></li>
+        <li><a href="#achieve">成果转化</a></li>
+        <li><a href="#project">项目进展</a></li>
+        <li><a href="#news">新闻动态</a></li>
+        <li><a href="#staff">师资队伍</a></li>
+    </ul>
+</div>
+
+<!--首页banner卡片-->
+<div class="banner" id="home">
+    <div class="banner-content">
+        <span class="banner-tag">重点科研机构</span>
+        <h2>探索神经与生命的边界，叩问Evol基因的奥秘</h2>
+        <p>许墨生命科学研究所｜坐落于恋语市科创园区，聚焦脑科学、神经感知、特殊基因机制研究</p>
+        <p style="margin-top:12px;"><strong>最新：</strong>许墨教授团队重磅论文发表，填补Evol神经调控领域研究空白</p>
+        <p>战略合作：研究所 × 恋语大学生命科学学院生物专业</p>
+    </div>
+</div>
+
+<!--快速入口卡片组-->
+<div class="quick-entry">
+    <div class="quick-item"><a href="#staff">许墨教授课题组主页</a></div>
+    <div class="quick-item"><a href="#achieve">最新论文下载专区</a></div>
+    <div class="quick-item"><a href="#edu">恋语大学联合培养专栏</a></div>
+    <div class="quick-item"><a href="#news">媒体专访报道</a></div>
+</div>
+
+<div class="container">
+    <!--研究所简介-->
+    <h3 class="section-title" id="intro">研究所简介</h3>
+    <div class="content-card">
+        <p>许墨生命科学研究所（XILS）由<strong>许墨（Lucien）教授归国后牵头创立</strong>，位于恋语市科创园区，是专注脑科学、神经生理学、Evol相关生命机制的专业科研机构，兼顾基础科研、人才培养、成果转化。</p>
+        <p>研究所与恋语大学深度合作，许墨担任恋语大学生物专业客座教授、博士生导师。研究所集合神经生物学、分子遗传学、临床神经医学研究人员，致力于解析特殊人类神经响应与基因表达机制。</p>
+        <br>
+        <p><strong>学术带头人｜许墨 教授（项目总负责人）</strong></p>
+        <p>许墨，研究所创始人、首席PI，11月15日生，博士生导师；年少海外求学，深耕脑科学、神经可塑性、Evol基因方向，在国际顶级期刊多篇发表成果。研究方向：神经感知、特殊基因表达、感官色彩感知神经环路。</p>
+        <p style="color:#666;font-style:italic;">小注：对他而言，世界曾失去色彩，而一份特殊羁绊重新为他带回斑斓万象。</p>
+    </div>
+
+    <!--人才教育-->
+    <h3 class="section-title" id="edu">人才教育</h3>
+    <div class="content-card">
+        <p><strong>研究生联合培养项目（与恋语大学生物专业合作）</strong></p>
+        <p>本研究所与恋语大学生命科学学院生物专业建立长期联合育人机制，接收恋语大学推免本科生、硕士、博士研究生进入许墨课题组开展科研训练。实行双导师制度：恋语大学校内导师 + 研究所课题导师（许墨及研究员）。</p>
+        <p>开设课程《高级神经生物学》《Evol生命科学导论》，由许墨主讲；每年开设暑期科研夏令营，向恋语大学开放实验室实习名额。</p>
+        <ul style="margin-left:22px;margin-top:8px;">
+            <li>博士后招聘计划</li>
+            <li>青年科研人员扶持计划</li>
+            <li>恋语大学本科生专项科研实践通道</li>
+        </ul>
+    </div>
+
+    <!--成果转化-->
+    <h3 class="section-title" id="achieve">科研成果 &amp; 成果转化</h3>
+    <div class="content-card">
+        <p><span class="banner-tag">重大成果</span>许墨团队《Neuron‑Advances》刊发论文，填补Evol人群感官神经调控领域国内外研究空白</p>
+        <p><strong>论文标题：</strong>《特殊基因介导下的感官重塑与色彩感知神经环路机制》</p>
+        <p><strong>通讯作者：</strong>许墨 Lucien</p>
+        <p><strong>摘要节选：</strong>本研究以神经感官重塑作为切入点，解析特殊个体感官感知变化的分子与环路基础，首次揭示外界情感羁绊对人脑视觉感知回路的调控作用，弥补该方向长期缺少实证研究的空白，为神经感知损伤修复提供全新思路。</p>
+        <p><a href="">👉点击下载论文摘要</a></p>
+        <br>
+        <p>代表性成果：多项神经生物学发明专利；神经康复预研技术储备；与恋语市生物医疗企业合作推进神经检测设备原型开发。</p>
+    </div>
+
+    <!--项目进展-->
+    <h3 class="section-title" id="project">项目进展</h3>
+    <div class="content-card">
+        <p><strong>1.Evol相关神经环路机制基础研究｜国家级重点课题 负责人：许墨（项目带头人）</strong></p>
+        <p>研究所核心主攻项目，许墨担任总带头人，多学科团队探究特殊人类脑功能变化、情绪‑感知联动机制。合作单位：恋语大学生物系、恋语市脑科医学中心。</p>
+        <p>阶段进展：已完成多组对照样本采集，完成核心环路初步建模，阶段性成果整理投稿。</p>
+        <br>
+        <p>2.感官损伤神经代偿修复预研项目</p>
+        <p>3.恋语大学‑许墨研究所联合开放课题（面向恋语大学师生开放申报）</p>
+    </div>
+
+    <!--新闻动态 卡片列表，点击弹窗-->
+    <h3 class="section-title" id="news">新闻动态</h3>
+    <div class="news-wrap">
+        <div class="news-card" data-modal-id="modal-1">
+            <span class="news-date">2026‑10‑08</span>
+            <div class="news-title">【头条】许墨教授团队重磅论文正式刊发，填补感官神经研究领域空白</div>
+        </div>
+        <div class="news-card" data-modal-id="modal-2">
+            <span class="news-date">2026‑09‑20</span>
+            <div class="news-title">研究所与恋语大学生物专业续签战略合作协议，扩大联合培养招生规模</div>
+        </div>
+        <div class="news-card" data-modal-id="modal-interview">
+            <span class="news-date">2026‑09‑10</span>
+            <div class="news-title">【媒体专访｜恋语科学周刊完整访谈】许墨：科学需要理性，但生活需要独属于自己的色彩</div>
+        </div>
+        <div class="news-card" data-modal-id="modal-3">
+            <span class="news-date">2026‑08‑25</span>
+            <div class="news-title">许墨教授赴恋语大学开展公开课《神经感知的秘密》，生物专业座无虚席</div>
+        </div>
+        <div class="news-card" data-modal-id="modal-4">
+            <span class="news-date">2026‑07‑12</span>
+            <div class="news-title">2026年度恋语大学暑期科研夏令营在研究所顺利开营</div>
+        </div>
+    </div>
+
+    <!--师资队伍【更新：增加邮箱+多位教授简历】-->
+    <h3 class="section-title" id="staff">师资队伍</h3>
+    <div class="content-card">
+        <div class="professor-item">
+            <p><strong>首席PI：许墨 Lucien</strong>｜研究所项目带头人，脑科学、神经生物学方向</p>
+            <p>研究方向：Evol基因神经调控、感官重塑、神经损伤修复</p>
+            <p>联系邮箱：<code>xumo.lucien@xils‑lianyu.org</code></p>
+            <p>个人爱好：阅读、植物，偏爱紫色桔梗。页面暗纹隐藏蝴蝶元素。</p>
+            <p>兼职：恋语大学生命科学学院生物专业客座教授、博士生导师</p>
+        </div>
+
+        <div class="professor-item">
+            <p><strong>沈知予 研究员 / 教授</strong>｜分子遗传学课题组PI</p>
+            <p>研究方向：Evol个体基因测序、特殊基因遗传表达模式。</p>
+            <p>简介：海外归国分子遗传学者，长期参与许墨牵头的国家级重点课题，负责样本库构建与基因测序分析，同时承担恋语大学《分子遗传学》课程教学。擅长高通量基因数据分析，主持多项省市级科研课题。</p>
+            <p>联系邮箱：<code>shen.zhiyu@xils‑lianyu.org</code></p>
+        </div>
+
+        <div class="professor-item">
+            <p><strong>温景明 教授</strong>｜临床神经医学课题组PI</p>
+            <p>研究方向：神经损伤修复、特殊个体脑损伤临床对照研究。</p>
+            <p>简介：原恋语市脑科医院主任医师，兼职本研究所教授。主攻神经代偿与康复医学，负责Evol相关临床样本采集与病例跟踪，与许墨课题组开展医工交叉合作，推动基础科研向临床应用转化。</p>
+            <p>联系邮箱：<code>wen.jingming@xils‑lianyu.org</code></p>
+        </div>
+
+        <div class="professor-item">
+            <p><strong>苏砚 副教授</strong>｜生物信息学课题组负责人</p>
+            <p>研究方向：脑信号大数据建模、神经环路仿真计算。</p>
+            <p>简介：恋语大学博士毕业，青年学术骨干，负责研究所脑科学数据平台搭建。运用计算生物学手段辅助解析感官重塑神经模型，参与多篇高水平论文数据分析工作，负责恋语大学联合培养生的计算方向指导。</p>
+            <p>联系邮箱：<code>su.yan@xils‑lianyu.org</code></p>
+        </div>
+
+        <p style="margin-top:12px;color:#666;">更多课题组青年科研骨干、博士后名录详见研究所内部下载专区。</p>
+    </div>
+</div>
+
+<!--弹窗模块：专访彩蛋弹窗（核心）-->
+<div class="modal-mask" id="modal-interview">
+    <div class="modal-box">
+        <span class="modal-close">×</span>
+        <h3>恋语科学周刊｜许墨教授完整访谈</h3>
+        <p style="margin:10px 0;color:#777;">发布时间：2026‑09‑10</p>
+        <hr style="margin:16px 0;">
+        <p class="interview-q">记者：许教授，您的研究常常提到“色彩感知重塑”。很多读者好奇，现实生活中，是什么改变了您对世界的感知？</p>
+        <p class="interview-a">许墨（唇角带着浅浅笑意，语气从容柔和）：从科研层面，我们可以用仪器解释神经通路、信号分子。但有一部分体验，是实验室数据无法度量的。从前我的世界大多是灰度的，直到遇见某个人。是她，让我重新看见世间万千色彩。</p>
+
+        <p class="interview-q">记者：听起来是非常重要的科研合作伙伴吗？</p>
+        <p class="interview-a">许墨：不完全算是科研伙伴。她更像是我全部生活的灵感来源。闲暇的时候我会陪她散步，街角花店老板都记得，我常常会买紫色桔梗。不少科研灵感，恰恰来自和她相处的那些细碎时光。我并不愿意过多谈及私人生活，但不得不承认，我的一部分研究思考，也来源于和她相处得到的感受。</p>
+
+        <p class="interview-q">那是否可以理解，爱情也能够反过来影响科学思考？</p>
+        <p class="interview-a">许墨：于我而言确实如此。理性搭建起我的研究，而她构筑了我的整个世界。<br>（话音落下，浅浅一笑，顺势将话题转回学术议题）</p>
+    </div>
+</div>
+
+<!--页脚包含：合作交流、联系我们-->
+<footer>
+    <div class="footer-block">
+        <h4>合作交流</h4>
+        <ul>
+            <li><strong>核心战略合作：恋语大学生命科学学院生物专业</strong><br>共建实验室、联合课题、研究生联合培养、夏令营</li>
+            <li>国内合作：恋语市脑科医院、恋语市生命科学学会</li>
+            <li>国际学术交流：海外多所脑科学实验室互访交流</li>
+        </ul>
+    </div>
+    <div class="footer-block">
+        <h4>联系我们</h4>
+        <p>地址：恋语市科创园区B7栋 许墨生命科学研究所</p>
+        <p>科研合作邮箱：xils‑science@lianyu.edu</p>
+        <p>招生咨询邮箱：xils‑edu@lianyu.edu</p>
+        <p>恋语大学联合培养办公室</p>
+    </div>
+    <div class="copyright">
+        ©许墨生命科学研究所 XILS XuMo Institute of Life Sciences LUCIEN<br>
+        本网页为恋与制作人同人模拟研究所官网，仅供同人创作使用，非真实机构
+    </div>
+</footer>
+
+<script>
+//弹窗交互【已修复符号bug】
+const newsCards = document.querySelectorAll('.news-card');
+const modalMaskList = document.querySelectorAll('.modal-mask');
+
+newsCards.forEach(card=>{
+    card.addEventListener('click',function(){
+        const mid = this.getAttribute('data-modal-id');
+        const modal = document.getElementById(mid);
+        if(!modal) return;
+        modal.style.display = 'flex';
+    })
+})
+
+//关闭弹窗
+modalMaskList.forEach(mask=>{
+    const closeBtn = mask.querySelector('.modal-close');
+    closeBtn.addEventListener('click',()=>{
+        mask.style.display='none';
+    })
+    //点击遮罩空白关闭弹窗
+    mask.addEventListener('click',(e)=>{
+        if(e.target === mask){
+            mask.style.display='none';
+        }
+    })
+})
+</script>
+</body>
+</html>
+<!-- （注：内容由AI生成） -->
